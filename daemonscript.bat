@@ -63,6 +63,8 @@ set mysqlversionroot=%serverroot%\mysql\
 
 set phpversioroot=%serverroot%\php\
 
+set mysqllogs=%serverroot%\mysql\log\all.sql
+
 echo.
 
 call :daemonscriptlogo
@@ -103,15 +105,15 @@ if "%choice%" == "ar" call :restartdaemon %apachedaemonname%
 
 if "%choice%" == "mr" call :restartdaemon %mysqldaemonname%
 
-if "%choice%" == "c" call :closedaemon %apachedaemonname% & call :closedaemon %mysqldaemonname%
+if "%choice%" == "c" call :closedaemon %apachedaemonname% & call :closedaemon %mysqldaemonname% & call :cleanlogs
 
-if "%choice%" == "ca" call :closedaemon %apachedaemonname%
+if "%choice%" == "ca" call :closedaemon %apachedaemonname%  & call :cleanlogs
 
-if "%choice%" == "cm" call :closedaemon %mysqldaemonname%
+if "%choice%" == "cm" call :closedaemon %mysqldaemonname%  & call :cleanlogs
 
-if "%choice%" == "ac" call :closedaemon %apachedaemonname%
+if "%choice%" == "ac" call :closedaemon %apachedaemonname%  & call :cleanlogs
 
-if "%choice%" == "mc" call :closedaemon %mysqldaemonname%
+if "%choice%" == "mc" call :closedaemon %mysqldaemonname%  & call :cleanlogs
 
 if "%choice%" == "l" call :loadeddaemons
 
@@ -388,6 +390,22 @@ for /l %%a in (0,1,32) do (if "!printstring_string:~%%a,1!"=="" set /a printstri
 set /a printstring_spacesnum=%1-%printstring_symbols%
 
 set printstring_buffer=%printstring_buffer%%printstring_string%!printstring_spaces:~0,%printstring_spacesnum%!
+
+goto :eof
+
+:cleanlogs
+
+echo Clean logs :
+
+call :cleanmysqllogs
+
+goto :eof
+
+:cleanmysqllogs
+
+echo Logs MYSQL deleting ...
+
+del /F /Q %mysqllogs%
 
 goto :eof
 
