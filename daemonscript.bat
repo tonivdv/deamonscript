@@ -63,7 +63,7 @@ set mysqlversionroot=%serverroot%\mysql\
 
 set phpversioroot=%serverroot%\php\
 
-set mysqllogs=%serverroot%\mysql\log\all.sql
+set remove_logs_on_shutdown=%serverroot%\mysql\log\all.sql
 
 echo.
 
@@ -405,7 +405,7 @@ goto :eof
 
 echo Logs MYSQL deleting ...
 
-del /F /Q %mysqllogs%
+del /F /Q %remove_logs_on_shutdown%
 
 goto :eof
 
