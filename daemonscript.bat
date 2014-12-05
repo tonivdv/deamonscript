@@ -63,7 +63,9 @@ set mysqlversionroot=%serverroot%\mysql\
 
 set phpversioroot=%serverroot%\php\
 
-set remove_logs_on_shutdown=%serverroot%\mysql\log\all.sql
+set mysqllogs=%serverroot%\mysql\log\all.sql
+
+set remove_logs_on_shutdown=1
 
 echo.
 
@@ -93,7 +95,7 @@ if "%choice%" == "as" call :apachestart
 
 if "%choice%" == "ms" call :mysqlstart
 
-if "%choice%" == "r" call :restartdaemon %apachedaemonname% & call :restartdaemon %mysqldaemonname%
+if "%choice%" == "r" call :restartdaemon %apachedaemonname% & call :restartdaemon %mysqldaemonname% & call :cleanlogs %mysqllogs%
 
 if "%choice%" == "ra" call :restartdaemon %apachedaemonname%
 
@@ -105,15 +107,15 @@ if "%choice%" == "ar" call :restartdaemon %apachedaemonname%
 
 if "%choice%" == "mr" call :restartdaemon %mysqldaemonname%
 
-if "%choice%" == "c" call :closedaemon %apachedaemonname% & call :closedaemon %mysqldaemonname% & call :cleanlogs
+if "%choice%" == "c" call :closedaemon %apachedaemonname% & call :closedaemon %mysqldaemonname% & call :cleanlogs %mysqllogs%
 
-if "%choice%" == "ca" call :closedaemon %apachedaemonname%  & call :cleanlogs
+if "%choice%" == "ca" call :closedaemon %apachedaemonname%  & call :cleanlogs %mysqllogs%
 
-if "%choice%" == "cm" call :closedaemon %mysqldaemonname%  & call :cleanlogs
+if "%choice%" == "cm" call :closedaemon %mysqldaemonname%  & call :cleanlogs %mysqllogs%
 
-if "%choice%" == "ac" call :closedaemon %apachedaemonname%  & call :cleanlogs
+if "%choice%" == "ac" call :closedaemon %apachedaemonname%  & call :cleanlogs %mysqllogs%
 
-if "%choice%" == "mc" call :closedaemon %mysqldaemonname%  & call :cleanlogs
+if "%choice%" == "mc" call :closedaemon %mysqldaemonname%  & call :cleanlogs %mysqllogs%
 
 if "%choice%" == "l" call :loadeddaemons
 
@@ -397,15 +399,17 @@ goto :eof
 
 echo Clean logs :
 
-call :cleanmysqllogs
+call :cleanmysqllogs %1
 
 goto :eof
 
 :cleanmysqllogs
 
+if %remove_logs_on_shutdown%==1 (
+
 echo Logs MYSQL deleting ...
 
-del /F /Q %remove_logs_on_shutdown%
+del /F /Q %1)
 
 goto :eof
 
